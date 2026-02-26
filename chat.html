@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Multi Company AI Chatbot Test</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+    padding:40px;
+}
+
+.container {
+    max-width:600px;
+    margin:auto;
+    background:#1e293b;
+    padding:25px;
+    border-radius:10px;
+}
+
+input, textarea, button {
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border-radius:5px;
+    border:none;
+}
+
+button {
+    background:#38bdf8;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#response {
+    margin-top:20px;
+    background:#020617;
+    padding:15px;
+    border-radius:8px;
+    min-height:100px;
+    white-space:pre-wrap;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>AI Chatbot Test Client</h2>
+
+<label>API URL</label>
+<input id="api_url" value="http://127.0.0.1:8000/api/chat/">
+
+<label>API Token</label>
+<input id="api_token" placeholder="secret123">
+
+<label>Company Code</label>
+<input id="company_code" placeholder="ABC123">
+
+<label>Message</label>
+<textarea id="message" rows="4" placeholder="Ask something..."></textarea>
+
+<button onclick="sendMessage()">Send</button>
+
+<h3>Bot Reply:</h3>
+<div id="response"></div>
+
+</div>
+
+<script>
+async function sendMessage(){
+
+    const url = document.getElementById("api_url").value;
+    const token = document.getElementById("api_token").value;
+    const company = document.getElementById("company_code").value;
+    const msg = document.getElementById("message").value;
+
+    document.getElementById("response").innerText = "Loading...";
+
+    try{
+        const res = await fetch(url, {
+            method: "POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                company_code: company,
+                api_token: token,
+                message: msg
+            })
+        });
+
+        const data = await res.json();
+
+        if(data.reply){
+            document.getElementById("response").innerText = data.reply;
+        }
+        else{
+            document.getElementById("response").innerText = JSON.stringify(data, null, 2);
+        }
+
+    }catch(err){
+        document.getElementById("response").innerText = "Error: " + err;
+    }
+}
+</script>
+
+</body>
+</html>
